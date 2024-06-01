@@ -36,7 +36,7 @@ def get_access_token_and_shares(init_data_line):
     chr_value, actual_init_data = init_data_line.split('|')
     payload = {
         "init_data": actual_init_data,
-        "chr": int(chr_value),
+        # "chr": int(chr_value),
         "referrer": "",
         "bot_key": "app_bot_0"
 
