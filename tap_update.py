@@ -32,50 +32,50 @@ def get_access_token_and_shares(init_data_line):
         "x-cv": "608",
         "x-bot": "no",
     }
-    # Pisahkan init_data_line menjadi chr dan init_data sebenarnya
-    chr_value, actual_init_data = init_data_line.split('|')
+    # chr_value, actual_init_data = init_data_line.split('|')
     payload = {
-        "init_data": actual_init_data,
-        # "chr": int(chr_value),
+        "init_data": init_data_line,
         "referrer": "",
         "bot_key": "app_bot_0"
-
     }
-    # print(payload)
     response = requests.post(url, headers=headers, data=json.dumps(payload))
     
     if response.status_code == 201:
         data = response.json()
-        access_token = data['access_token']
-        name = data['player']['full_name']
-        coin = data['player']['shares']
-        energy = data['player']['energy']
-        level_energy = data['player']['energy_level']
-        level_charge = data['player']['charge_level']
-        level_tap = data['player']['tap_level']
-        boosts = data['player']['boost']
-        energy_boost = next((b for b in boosts if b["type"] == "energy"), None)
-        turbo_boost = next((b for b in boosts if b["type"] == "turbo"), None)
-        boost_ready = turbo_boost['cnt']
-        energy_ready = energy_boost['cnt']
+        if 'access_token' in data:
+            access_token = data['access_token']
+            name = data['player']['full_name']
+            coin = data['player']['shares']
+            energy = data['player']['energy']
+            level_energy = data['player']['energy_level']
+            level_charge = data['player']['charge_level']
+            level_tap = data['player']['tap_level']
+            boosts = data['player']['boost']
+            energy_boost = next((b for b in boosts if b["type"] == "energy"), None)
+            turbo_boost = next((b for b in boosts if b["type"] == "turbo"), None)
+            boost_ready = turbo_boost['cnt']
+            energy_ready = energy_boost['cnt']
 
-        print(f"{Fore.BLUE+Style.BRIGHT}\n========================== ")  
-        print(f"{Fore.GREEN+Style.BRIGHT}[Nama]: {name}")    
-        print(f"{Fore.YELLOW+Style.BRIGHT}[Koin]: {coin}")
-        print(f"{Fore.YELLOW+Style.BRIGHT}[Energi]: {energy}")
-        print(f"{Fore.CYAN+Style.BRIGHT}[Level Tap]: {level_tap}")
-        print(f"{Fore.CYAN+Style.BRIGHT}[Level Energi]: {level_energy}")
-        print(f"{Fore.CYAN+Style.BRIGHT}[Level Recharge]: {level_charge}")
-        print(f"{Fore.MAGENTA+Style.BRIGHT}[Free Booster] : Energy {energy_boost['cnt']} | Turbo : {turbo_boost['cnt']}")
+            print(f"{Fore.BLUE+Style.BRIGHT}\n========================== ")  
+            print(f"{Fore.GREEN+Style.BRIGHT}[Nama]: {name}")    
+            print(f"{Fore.YELLOW+Style.BRIGHT}[Koin]: {coin}")
+            print(f"{Fore.YELLOW+Style.BRIGHT}[Energi]: {energy}")
+            print(f"{Fore.CYAN+Style.BRIGHT}[Level Tap]: {level_tap}")
+            print(f"{Fore.CYAN+Style.BRIGHT}[Level Energi]: {level_energy}")
+            print(f"{Fore.CYAN+Style.BRIGHT}[Level Recharge]: {level_charge}")
+            print(f"{Fore.MAGENTA+Style.BRIGHT}[Free Booster] : Energy {energy_boost['cnt']} | Turbo : {turbo_boost['cnt']}")
 
-        return access_token, energy, boost_ready, energy_ready
+            return access_token, energy, boost_ready, energy_ready
+        else:
+            print("Token akses tidak ditemukan dalam respons.")
+            return None, None, None, None
     elif response.status_code == 408:
         print("Request Time Out")
-        return None, None, None, None
     else:
         print(response.json())
         print(f"Gagal mendapatkan token akses, status code: {response.status_code}")
-        return None, None, None, None
+    
+    return None, None, None, None
 turbo_activated = False    
 def apply_turbo_boost(access_token):
     global turbo_activated
