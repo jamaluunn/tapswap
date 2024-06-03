@@ -1,2 +1,2 @@
 query=xxx
-test='merged request'
+test="merge request"
