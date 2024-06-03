@@ -1,1 +1,2 @@
 query=xxx
+test='merged request'
